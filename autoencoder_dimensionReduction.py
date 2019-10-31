@@ -3,6 +3,10 @@
 """
 Created on Wed Oct 30 16:34:31 2019
 
+The code was adapted based on article by Nikolay Oskolkov
+https://github.com/NikolayOskolkov/DeepLearningSingleCellBiology/blob/master/10X_Genomics_Autoencoder.ipynb
+https://towardsdatascience.com/deep-learning-for-single-cell-biology-935d45064438
+
 @author: jingkui.wang
 """
 

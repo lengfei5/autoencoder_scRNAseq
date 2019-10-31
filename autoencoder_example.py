@@ -12,6 +12,7 @@ https://blog.keras.io/building-autoencoders-in-keras.html
 from keras.layers import Input, Dense
 from keras.models import Model
 
+
 # this is the size of our encoded representations
 encoding_dim = 32  # 32 floats -> compression of factor 24.5, assuming the input is 784 floats
 
