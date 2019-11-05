@@ -11,9 +11,16 @@ https://towardsdatascience.com/deep-learning-for-single-cell-biology-935d4506443
 """
 import os
 os.environ['TF_CPP_MIN_LOG_LEVEL']='2'
+import theano
+theano.config.gcc.cxxflags = "-Wno-c++11-narrowing"
+import keras
+#KERAS_BACKEND=tensorflow python -c "from keras import backend"
+keras.backend.backend()
 
+#os.environ['KERAS_BACKEND'] = 'tensorflow'
 import numpy as np
 import pandas as pd
+
 from keras.models import Sequential, Model
 from keras.layers import Dense
 from keras.optimizers import Adam
@@ -60,12 +67,13 @@ model.add(Dense(20,       activation='elu'))
 model.add(Dense(30,       activation='elu'))
 model.add(Dense(n_input,  activation='sigmoid'))
 model.compile(loss = 'mean_squared_error', optimizer = Adam())
-model.fit(x_train, x_train, batch_size = 128, epochs = 500, verbose = 0)
+
+model.fit(x_train, x_train, batch_size = 128, epochs = 10, verbose = 1)
 encoder = Model(model.input, model.get_layer('bottleneck').output)
 bottleneck_representation = encoder.predict(x_train)
 
 plt.scatter(bottleneck_representation[:,0], bottleneck_representation[:,1], 
-            c = y_train, s = 10, cmap = 'tab20')
+            s = 10, cmap = 'tab20')
 plt.title('Autoencoder: 8 Layers')
 plt.xlabel("Dimension 1")
 plt.ylabel("Dimension 2")
@@ -75,7 +83,7 @@ plt.ylabel("Dimension 2")
 model_tsne = TSNE(learning_rate = 200, n_components = 2, random_state = 123, 
                   perplexity = 90, n_iter = 1000, verbose = 1)
 tsne = model_tsne.fit_transform(x_train)
-plt.scatter(tsne[:, 0], tsne[:, 1], c = y_train, cmap = 'tab20', s = 10)
+plt.scatter(tsne[:, 0], tsne[:, 1], cmap = 'tab20', s = 10)
 plt.title('tSNE on PCA')
 plt.xlabel("tSNE1")
 plt.ylabel("tSNE2")
