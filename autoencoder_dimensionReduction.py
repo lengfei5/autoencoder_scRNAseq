@@ -9,26 +9,42 @@ https://towardsdatascience.com/deep-learning-for-single-cell-biology-935d4506443
 
 @author: jingkui.wang
 """
+import os
+os.environ['TF_CPP_MIN_LOG_LEVEL']='2'
 
 import numpy as np
 import pandas as pd
-from keras.layers import Dense
-import matplotlib.pyplot as plt
-from sklearn.manifold import TSNE
-from keras.optimizers import Adam
-from sklearn.decomposition import PCA
 from keras.models import Sequential, Model
+from keras.layers import Dense
+from keras.optimizers import Adam
+from sklearn.manifold import TSNE
+from sklearn.decomposition import PCA
+import matplotlib.pyplot as plt
 
 # READ AND LOG-TRANSFORM DATA
-expr = pd.read_csv('MouseBrain_10X_1.3M.txt',sep='\t')
-X = expr.values[:,0:(expr.shape[1]-1)]
-Y = expr.values[:,expr.shape[1]-1]
-X = np.log(X + 1)
+expr = pd.read_csv('data/GSE100866_CBMC_8K_13AB_10X-RNA_umi_mouse.csv',sep=',', header = 0, index_col = 0)
+
+## check the some rows and columns 
+expr.iloc[0,:]
+expr.iloc[:, 0]
+
+## there are mouse and human genes, here to simplify the example, only keep mouse genes
+#mask = expr.iloc[:, 0].str.contains('MOUSE_') 
+#df = expr[mask]   
+
+#df.iloc[0,:]
+#df.iloc[:, 0]
+
+X = expr.values[:,0:expr.shape[1]]
+
+#Y = expr.values[:,expr.shape[1]-1]
+X = np.log(X + 1.0)
 
 # REDUCE DIMENSIONS WITH PRINCIPAL COMPONENT ANALYSIS (PCA)
 n_input = 50
-x_train = PCA(n_components = n_input).fit_transform(X); y_train = Y
-plt.scatter(x_train[:, 0], x_train[:, 1], c = y_train, cmap = 'tab20', s = 10)
+x_train = PCA(n_components = n_input).fit_transform(X); 
+#y_train = Y
+plt.scatter(x_train[:, 0], x_train[:, 1], cmap = 'tab20', s = 10)
 plt.title('Principal Component Analysis (PCA)')
 plt.xlabel("PC1")
 plt.ylabel("PC2")
@@ -44,9 +60,10 @@ model.add(Dense(20,       activation='elu'))
 model.add(Dense(30,       activation='elu'))
 model.add(Dense(n_input,  activation='sigmoid'))
 model.compile(loss = 'mean_squared_error', optimizer = Adam())
-model.fit(x_train, x_train, batch_size = 128, epochs = 500, verbose = 1)
+model.fit(x_train, x_train, batch_size = 128, epochs = 500, verbose = 0)
 encoder = Model(model.input, model.get_layer('bottleneck').output)
 bottleneck_representation = encoder.predict(x_train)
+
 plt.scatter(bottleneck_representation[:,0], bottleneck_representation[:,1], 
             c = y_train, s = 10, cmap = 'tab20')
 plt.title('Autoencoder: 8 Layers')
