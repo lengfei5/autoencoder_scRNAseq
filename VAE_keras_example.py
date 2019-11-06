@@ -20,10 +20,18 @@ latent vector from a Gaussian distribution with mean = 0 and std = 1.
 "Auto-Encoding Variational Bayes."
 https://arxiv.org/abs/1312.6114
 '''
+# special configuration for keras
+import os
+os.environ['TF_CPP_MIN_LOG_LEVEL']='2'
+import theano
+theano.config.gcc.cxxflags = "-Wno-c++11-narrowing"
+import keras
+keras.backend.backend()
 
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
+
 
 from keras.layers import Lambda, Input, Dense
 from keras.models import Model
