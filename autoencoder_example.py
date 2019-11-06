@@ -24,7 +24,6 @@ from keras.layers import Input, Dense
 from keras.models import Model
 
 
-
 ## prepare the input data using MNIST digits
 from keras.datasets import mnist
 (x_train, _), (x_test, _) = mnist.load_data()
@@ -121,23 +120,32 @@ autoencoder = Model(input_img, decoded)
 
 # this model maps an input to its encoded representation
 encoder = Model(input_img, encoded)
-# create a placeholder for an encoded (32-dimensional) input
-encoded_input = Input(shape=(32,))
-# retrieve the last layer of the autoencoder model
-decoder_layer = autoencoder.layers[]
-# create the decoder model
-decoder = Model(encoded_input, decoder_layer(encoded_input))
+
+## test a way of creating the decoder model, but it does not work, becaue it is just another unrelevant NN
+## the good one should extract the last 3 layers of autoencoder to keep the sampe parameters
+## Now it works :) 
+decoded_input = Input(shape=(32,))
+decoded_2 = autoencoder.layers[4](decoded_input)
+decoded_2 = autoencoder.layers[5](decoded_2)
+decoded_2 = autoencoder.layers[6](decoded_2)
+decoder = Model(decoded_input, decoded_2)
+
+# create the decoder model by extracting autoencoder's layers
+#encoded_input = Input(shape=(32,))
+#decoder_layer = autoencoder.layers[4:7]
+#decoder = Model(encoded_input, decoder_layer(encoded_input))
 
 autoencoder.compile(optimizer='adadelta', loss='binary_crossentropy')
 
 autoencoder.fit(x_train, x_train,
-                epochs=100,
+                epochs=20,
                 batch_size=256,
                 shuffle=True,
                 validation_data=(x_test, x_test))
 
 encoded_imgs = encoder.predict(x_test)
 decoded_imgs = decoder.predict(encoded_imgs)
+#decoded_imgs = autoencoder.predict(x_test)
 
 n = 10  # how many digits we will display
 plt.figure(figsize=(20, 4))
