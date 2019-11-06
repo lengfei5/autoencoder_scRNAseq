@@ -9,7 +9,13 @@ https://blog.keras.io/building-autoencoders-in-keras.html
 @author: jingkui.wang
 """
 import os
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
+os.environ['TF_CPP_MIN_LOG_LEVEL']='2'
+import theano
+theano.config.gcc.cxxflags = "-Wno-c++11-narrowing"
+import keras
+#KERAS_BACKEND=tensorflow python -c "from keras import backend"
+keras.backend.backend()
+
 from keras.layers import Input, Dense
 from keras.models import Model
 from keras.datasets import mnist
@@ -78,8 +84,8 @@ encoded_imgs = encoder.predict(x_test)
 decoded_imgs = decoder.predict(encoded_imgs)
 
 # use Matplotlib (don't ask)
-plt.imshow(x_test[0].reshape(28, 28))
-plt.imshow(x_test[2].reshape(28, 28))
+#plt.imshow(x_test[0].reshape(28, 28))
+#plt.imshow(x_test[2].reshape(28, 28))
 
 n = 10  # how many digits we will display
 plt.figure(figsize=(20, 4))
