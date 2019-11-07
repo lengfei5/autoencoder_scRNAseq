@@ -23,7 +23,6 @@ import matplotlib.pyplot as plt
 from keras.layers import Input, Dense
 from keras.models import Model
 
-
 ## prepare the input data using MNIST digits
 from keras.datasets import mnist
 (x_train, _), (x_test, _) = mnist.load_data()
