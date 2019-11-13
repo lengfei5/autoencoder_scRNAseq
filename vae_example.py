@@ -3,7 +3,8 @@
 """
 Created on Thu Nov  7 15:35:25 2019
 This is an example code from Keras
-https://blog.keras.io/building-autoencoders-in-keras.html
+https://github.com/keras-team/keras/blob/master/examples/variational_autoencoder.py
+
 @author: jingkui.wang
 """
 from __future__ import absolute_import
@@ -116,13 +117,11 @@ x_train = x_train.astype('float32') / 255
 x_test = x_test.astype('float32') / 255
 
 # network parameters
-input_shape = (original_dim, )
 intermediate_dim = 128
 batch_size = 128
 latent_dim = 2
-epochs = 5
-epsilon_std = 1.0
-
+epochs = 50
+input_shape = (original_dim, )
 
 # VAE model = encoder + decoder
 # build encoder model
